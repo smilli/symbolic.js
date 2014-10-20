@@ -4,3 +4,4 @@ logs/*
 !.gitkeep
 tmp
 .grunt/
+_SpecRunner.html
