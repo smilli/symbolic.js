@@ -10,7 +10,11 @@ module.exports = function(grunt) {
         latedef: true,
         nonbsp: true,
         quotmark: 'single',
-        undef: true
+        globals: {
+          describe: false,
+          it: false,
+          expect: false
+        },
       },
       all: ['src/*.js', 'test/*.js']
     },
