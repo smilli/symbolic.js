@@ -1,4 +1,4 @@
-# symbolic.js
+# symbolic.js [![Build Status](https://travis-ci.org/smilli/symbolic.js.svg?branch=master)](https://travis-ci.org/smilli/symbolic.js)
 A client-side symbolic algebra Javascript library.
 
 # Contribute
