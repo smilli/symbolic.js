@@ -38,21 +38,41 @@ sy.Expr = function(value, operands) {
     throw new Error('Expression must have a value.');
   }
   this.value = value;
+  this.operands = [];
   if (sy.isOperator(value)) {
     if (operands === undefined) {
       throw new Error('An expression with an operator as a value must have ' +
           'operands.');
     }
-    this.value = value;
-    this.operands = operands;
+    this.addOperands(operands);
   } else if (sy.isTerminal(value)) {
     if (operands !== undefined) {
       throw new Error('An expression without an operator as a value cannot ' +
           'have operands.');
     }
-    this.value = value;
-    this.operands = [];
   } else {
     throw new Error('Invalid value for expression.');
   }
+};
+
+/**
+ * Removes the i-th operand.
+ * @param {int} index - The index of the operand to remove
+ * @return {Expr} - the removed operand
+ */
+sy.Expr.prototype.removeOperand = function(index) {
+  return this.operands.splice(index, 1)[0];
+};
+
+/**
+ * Extends list of operands with given operands.
+ * @param {Expr[]} newOperands - list of new operands to add
+ */
+sy.Expr.prototype.addOperands = function(newOperands) {
+  for (var i = 0; i < newOperands.length; i++) {
+    if (!(newOperands[i] instanceof sy.Expr)) {
+      throw new Error('Operands must be expressions.');
+    }
+  }
+  this.operands.push.apply(this.operands, newOperands);
 };

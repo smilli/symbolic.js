@@ -36,4 +36,36 @@ describe('Expr', function(){
           'operator as a value must have operands.'));
     }
   });
+
+});
+
+
+describe('Expr.removeOperand', function() {
+  it('should remove correct operand', function() {
+    var expr = new sy.Expr('+', [
+      new sy.Expr(2), new sy.Expr(3), new sy.Expr(8)]);
+    expr.removeOperand(1);
+    expect(expr.operands.length).toBe(2);
+    expect(expr.operands[0].value).toBe(2);
+    expect(expr.operands[1].value).toBe(8);
+  });
+});
+
+
+describe('Expr.addOperands', function() {
+  it('should add new operands', function() {
+    var expr = new sy.Expr('+', [
+      new sy.Expr(2), new sy.Expr(3), new sy.Expr(8)]);
+    expr.addOperands([
+      new sy.Expr(new sy.Symbol('x')), new sy.Expr(4)]);
+    expect(expr.operands.length).toBe(5);
+  });
+
+  it('should only add operands that are Exprs', function() {
+    var expr = new sy.Expr('+', [
+      new sy.Expr(2), new sy.Expr(3), new sy.Expr(8)]);
+    expect(function() {
+      expr.addOperands([sy.Symbol('x'), 4]);
+    }).toThrow(new Error('Operands must be expressions.'));
+  });
 });
