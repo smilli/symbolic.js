@@ -42,7 +42,7 @@ sy._popOper = function(output, opStack) {
   op = opStack.pop();
   operand1 = output.pop();
   operand2 = output.pop();
-  output.push(sy.Expr(op, [operand1, operand2]));
+  output.push(new sy.Expr(op, [operand1, operand2]));
 };
 
 /**
@@ -63,7 +63,7 @@ sy._dijkstraParse = function(exprStr) {
         symbolName += exprStr[index];
         index++;
       }
-      output.push(sy.Expr(sy.Symbol(symbolName)));
+      output.push(new sy.Expr(new sy.Symbol(symbolName)));
     } else if (sy._isDigitOrDecimalPovar(exprStr[index])) {
       var numString = '';
       while (index < exprStr.length && 
@@ -74,7 +74,7 @@ sy._dijkstraParse = function(exprStr) {
       if (isNaN(numString)) {
         throw new Error('Invalid number ' + numString);
       }
-      output.push(sy.Symbol(Number(numString)));
+      output.push(new sy.Expr(Number(numString)));
     } else if (exprStr[index] === '(') {
       opStack.push(exprStr[index]);
       index += 1;
@@ -100,7 +100,7 @@ sy._dijkstraParse = function(exprStr) {
   if (output.length() > 1) {
     throw new Error('Malformed expression.');
   }
-  return output[0];
+  return output.pop();
 };
 
 /**

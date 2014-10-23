@@ -9,6 +9,16 @@ sy.Symbol = function(symbolName) {
 
 
 /**
+ * Returns true if the other object is the same as this object.
+ * @param {Symbol} - the other object to compare
+ * @return {bool} - true if objects are equal, false otherwise
+ */
+sy.Symbol.prototype.equals = function(other) {
+  return (other instanceof sy.Symbol && this.symbolName === other.symbolName);
+};
+
+
+/**
  * Returns whether a value is an operator.
  * @param {*} value - The value to check.
  */
@@ -55,6 +65,29 @@ sy.Expr = function(value, operands) {
   }
 };
 
+
+/**
+ * Returns true if the other object is the same as this object.
+ * @param {Expr} - the other object to compare
+ * @return {bool} - true if objects are equal, false otherwise
+ */
+sy.Expr.prototype.equals = function(other) {
+  if (other instanceof sy.Expr &&
+      (this.value === other.value || this.value.equals(other.value))) {
+    if (this.operands.length !== other.operands.length) {
+      return false;
+    }
+    for (var i = 0; i < this.operands.length; i++) {
+      if (!(this.operands[i].equals(other.operands[i]))) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+};
+
+
 /**
  * Removes the i-th operand.
  * @param {int} index - The index of the operand to remove
@@ -63,6 +96,7 @@ sy.Expr = function(value, operands) {
 sy.Expr.prototype.removeOperand = function(index) {
   return this.operands.splice(index, 1)[0];
 };
+
 
 /**
  * Extends list of operands with given operands.

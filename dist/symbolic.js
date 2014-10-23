@@ -17,6 +17,16 @@ sy.Symbol = function(symbolName) {
 
 
 /**
+ * Returns true if the other object is the same as this object.
+ * @param {Symbol} - the other object to compare
+ * @return {bool} - true if objects are equal, false otherwise
+ */
+sy.Symbol.prototype.equals = function(other) {
+  return (other instanceof sy.Symbol && this.symbolName === other.symbolName);
+};
+
+
+/**
  * Returns whether a value is an operator.
  * @param {*} value - The value to check.
  */
@@ -63,6 +73,29 @@ sy.Expr = function(value, operands) {
   }
 };
 
+
+/**
+ * Returns true if the other object is the same as this object.
+ * @param {Expr} - the other object to compare
+ * @return {bool} - true if objects are equal, false otherwise
+ */
+sy.Expr.prototype.equals = function(other) {
+  if (other instanceof sy.Expr &&
+      (this.value === other.value || this.value.equals(other.value))) {
+    if (this.operands.length !== other.operands.length) {
+      return false;
+    }
+    for (var i = 0; i < this.operands.length; i++) {
+      if (!(this.operands[i].equals(other.operands[i]))) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+};
+
+
 /**
  * Removes the i-th operand.
  * @param {int} index - The index of the operand to remove
@@ -71,6 +104,7 @@ sy.Expr = function(value, operands) {
 sy.Expr.prototype.removeOperand = function(index) {
   return this.operands.splice(index, 1)[0];
 };
+
 
 /**
  * Extends list of operands with given operands.
@@ -129,7 +163,7 @@ sy._popOper = function(output, opStack) {
   op = opStack.pop();
   operand1 = output.pop();
   operand2 = output.pop();
-  output.push(sy.Expr(op, [operand1, operand2]));
+  output.push(new sy.Expr(op, [operand1, operand2]));
 };
 
 /**
@@ -150,7 +184,7 @@ sy._dijkstraParse = function(exprStr) {
         symbolName += exprStr[index];
         index++;
       }
-      output.push(sy.Expr(sy.Symbol(symbolName)));
+      output.push(new sy.Expr(new sy.Symbol(symbolName)));
     } else if (sy._isDigitOrDecimalPovar(exprStr[index])) {
       var numString = '';
       while (index < exprStr.length && 
@@ -161,7 +195,7 @@ sy._dijkstraParse = function(exprStr) {
       if (isNaN(numString)) {
         throw new Error('Invalid number ' + numString);
       }
-      output.push(sy.Symbol(Number(numString)));
+      output.push(new sy.Expr(Number(numString)));
     } else if (exprStr[index] === '(') {
       opStack.push(exprStr[index]);
       index += 1;
@@ -187,7 +221,7 @@ sy._dijkstraParse = function(exprStr) {
   if (output.length() > 1) {
     throw new Error('Malformed expression.');
   }
-  return output[0];
+  return output.pop();
 };
 
 /**
