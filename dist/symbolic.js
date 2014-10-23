@@ -1,3 +1,11 @@
+/* Symbolic.js module */
+var sy = {};
+
+/* Operator constants */
+sy._OPS = ['+', '*', '^', '/'];
+sy._OP_PRECEDENCES = {'+': 1, '*': 2, '/': 2, '^': 3, '(': 0};
+sy._OP_NAMES = {'+': 'Add', '*': 'Mul', '^': 'Exp', '/': 'Div'};
+
 /**
  * Represents a variable like x or y that should be treated symbolically.
  * @constructor
@@ -55,4 +63,11 @@ sy.Expr = function(value, operands) {
   } else {
     throw new Error('Invalid value for expression.');
   }
+};
+
+/**
+ * Parses a string into an expression.
+ * @param {string} exprStr - string to parse
+ */
+sy.parse = function(exprStr) {
 };

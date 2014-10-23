@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       all: ['src/*.js', 'test/*.js']
     },
     jasmine: {
-      src: 'src/*.js',
+      src: 'dist/symbolic.js',
       options: {
         specs: 'test/*Spec.js',
       }
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
         seperator: ';',
       },
       dist: {
-        src: 'src/*.js',
+        src: ['src/sy.js', 'src/*.js'],
         dest: 'dist/symbolic.js'
       }
     }
@@ -38,6 +38,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.registerTask('test', ['jshint', 'jasmine']);
-  grunt.registerTask('build', ['jshint', 'jasmine', 'concat']);
+  grunt.registerTask('test', ['jshint', 'concat', 'jasmine']);
 };
