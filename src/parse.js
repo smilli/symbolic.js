@@ -2,7 +2,7 @@ sy._isAlpha = function(str){
   return (/^[a-z]+$/i.test(str));
 };
 
-sy._isDigitOrDecimalPovar = function(str){
+sy._isDigitOrDecPoint = function(str){
   return (!/\D/.test(str) || str === '.'); 
 };
 
@@ -29,7 +29,7 @@ sy._Stack.prototype.pop = function() {
 };
 
 sy._Stack.prototype.peek = function() {
-  return stack[stack.length - 1];
+  return this.stack[this.stack.length - 1];
 };
 
 /**
@@ -40,8 +40,13 @@ sy._Stack.prototype.peek = function() {
  */
 sy._popOper = function(output, opStack) {
   op = opStack.pop();
-  operand1 = output.pop();
   operand2 = output.pop();
+  // for unary operators
+  if (output.length() === 0) {
+    output.push(new sy.Expr(op, [operand2]));
+    return;
+  }
+  operand1 = output.pop();
   output.push(new sy.Expr(op, [operand1, operand2]));
 };
 
@@ -64,10 +69,10 @@ sy._dijkstraParse = function(exprStr) {
         index++;
       }
       output.push(new sy.Expr(new sy.Symbol(symbolName)));
-    } else if (sy._isDigitOrDecimalPovar(exprStr[index])) {
+    } else if (sy._isDigitOrDecPoint(exprStr[index])) {
       var numString = '';
       while (index < exprStr.length && 
-        sy._isDigitOrDecimalPovar(exprStr[index])) {
+        sy._isDigitOrDecPoint(exprStr[index])) {
         numString += exprStr[index];      
         index += 1;
       }
@@ -89,6 +94,15 @@ sy._dijkstraParse = function(exprStr) {
       opStack.pop();
       index += 1;
     } else if (sy.isOperator(exprStr[index])) {
+      var newOp = exprStr[index];
+      while (opStack.length > 0 && 
+          sy._OP_PRECEDENCES[newOp] <= sy._OP_PRECEDENCES[opStack.peek()]) {
+        sy._popOper(output, opStack);
+      }
+      opStack.push(newOp);
+      index += 1;
+    } else {
+      throw new Error('Malformed expression.');
     }
   }
   while (opStack.length() > 0) {
@@ -113,13 +127,14 @@ sy._dijkstraParse = function(exprStr) {
  * @param {sy.Expr} - the expression to flatten
  */
 sy._flattenExpr = function(expr) {
-  // TODO(smilli): Still need to implement this for '/', '^'
+  // TODO(smilli): Should intelligently combine -, /, ^
   if (expr.operands.length === 0) {
     return expr;
   }
   for (var i = 0; i < expr.operands.length; i++) {
     expr.operands[i] = sy._flattenExpr(expr.operands[i]);
-    if (expr.operands[i].value === expr.value) {
+    if (!sy.isOpOrdered(expr.value) &&
+        expr.operands[i].value === expr.value) {
       expr.addOperands(expr.operands[i].operands);
       expr.removeOperand(i);
     }
