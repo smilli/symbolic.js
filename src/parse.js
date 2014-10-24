@@ -51,6 +51,18 @@ sy._popOper = function(output, opStack) {
 };
 
 /**
+ * Inserts strToInsert into str at index & returns a new string.
+ * @param {string} str - the string to insert into
+ * @param {index} index - the index in str to insert at
+ * @param {string} strToInsert - what to insert into the string
+ * @returns {string} the new string
+ */
+sy.insertInStr = function(str, index, substr) {
+  newStr = str.slice(0, index) + substr + str.slice(index);
+  return newStr;
+};
+
+/**
  * Parses a string varo an expression using Dijkstra's Shunting Yard algorithm.
  * @private
  * @param {string} exprStr - the string to parse
@@ -63,22 +75,22 @@ sy._dijkstraParse = function(exprStr) {
 
   while (index < exprStr.length) {
     if (sy._isAlpha(exprStr[index])) {
-      var symbolName = '';
-      while (index < exprStr.length && sy._isAlpha(exprStr[index])) {
-        symbolName += exprStr[index];
-        index++;
+      // Variables are required to be one char long
+      output.push(new sy.Expr(new sy.Symbol(exprStr[index])));
+      index++;
+      if (index < exprStr.length && sy._isAlpha(exprStr[index])) {
+        exprStr = sy.insertInStr(exprStr, index, '*');
       }
-      output.push(new sy.Expr(new sy.Symbol(symbolName)));
     } else if (sy._isDigitOrDecPoint(exprStr[index])) {
       var numString = '';
       while (index < exprStr.length && 
         sy._isDigitOrDecPoint(exprStr[index])) {
         numString += exprStr[index];      
-        index += 1;
+        index++;
       }
       // for a number followed by a variable like 2x
       if (index < exprStr.length && sy._isAlpha(exprStr[index])) {
-        exprStr = exprStr.slice(0, index) + '*' + exprStr.slice(index);
+        exprStr = sy.insertInStr(exprStr, index, '*');
       }
       if (isNaN(numString)) {
         throw new Error('Invalid number ' + numString);
@@ -86,7 +98,7 @@ sy._dijkstraParse = function(exprStr) {
       output.push(new sy.Expr(Number(numString)));
     } else if (exprStr[index] === '(') {
       opStack.push(exprStr[index]);
-      index += 1;
+      index++;
     } else if (exprStr[index] === ')') {
       while (opStack.length() > 0 && opStack.peek() !== '(') {
         sy._popOper(output, opStack);
@@ -96,7 +108,7 @@ sy._dijkstraParse = function(exprStr) {
           'expression.');
       }
       opStack.pop();
-      index += 1;
+      index++;
     } else if (sy.isOperator(exprStr[index])) {
       var newOp = exprStr[index];
       while (opStack.length > 0 && 
@@ -104,7 +116,7 @@ sy._dijkstraParse = function(exprStr) {
         sy._popOper(output, opStack);
       }
       opStack.push(newOp);
-      index += 1;
+      index++;
     } else {
       throw new Error('Malformed expression.');
     }

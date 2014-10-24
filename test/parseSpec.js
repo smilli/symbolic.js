@@ -26,11 +26,26 @@ describe('sy.parse', function() {
     expect(expr).toEqual(expected);
   });
 
-  it('should parse numbers followed by variables using *', function() {
+  it('should parse implicit products of numbers and vars', function() {
     var expr, expected;
     expr = sy.parse('2.5x');
     expected = new sy.Expr('*', [
       new sy.Expr(2.5), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr).toEqual(expected);
+
+    expr = sy.parse('xy');
+    expected = new sy.Expr('*', [
+      new sy.Expr(new sy.Symbol('x')),
+      new sy.Expr(new sy.Symbol('y'))
+    ]);
+    expect(expr).toEqual(expected);
+
+    expr = sy.parse('2.5xy');
+    expected = new sy.Expr('*', [
+      new sy.Expr(2.5),
+      new sy.Expr(new sy.Symbol('x')),
+      new sy.Expr(new sy.Symbol('y'))
+    ]);
     expect(expr).toEqual(expected);
   });
 

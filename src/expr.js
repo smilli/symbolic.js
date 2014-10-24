@@ -19,24 +19,6 @@ sy.Symbol.prototype.equals = function(other) {
 
 
 /**
- * Returns whether a value is an operator.
- * @param {*} value - The value to check.
- */
-sy.isOperator = function(value) {
-  return sy._OPS.indexOf(value) > -1;
-};
-
-
-/**
- * Returns whether a value is a terminal value.
- * @param {*} value - The value to check.
- */
-sy.isTerminal = function(value) {
-  return typeof value === 'number' || value instanceof sy.Symbol;
-};
-
-
-/**
  * A node in an expression tree.  Can be an operation, symbol, or number.
  * @constructor
  * @param {(number|Symbol|string)} value - The value of this expression node
