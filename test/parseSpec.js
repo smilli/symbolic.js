@@ -26,6 +26,14 @@ describe('sy.parse', function() {
     expect(expr).toEqual(expected);
   });
 
+  it('should parse numbers followed by variables using *', function() {
+    var expr, expected;
+    expr = sy.parse('2.5x');
+    expected = new sy.Expr('*', [
+      new sy.Expr(2.5), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr).toEqual(expected);
+  });
+
   it('should parse expressions with operators', function() {
     var expr, expected;
     expr = sy.parse('2.54 + x');

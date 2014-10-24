@@ -228,6 +228,10 @@ sy._dijkstraParse = function(exprStr) {
         numString += exprStr[index];      
         index += 1;
       }
+      // for a number followed by a variable like 2x
+      if (index < exprStr.length && sy._isAlpha(exprStr[index])) {
+        exprStr = exprStr.slice(0, index) + '*' + exprStr.slice(index);
+      }
       if (isNaN(numString)) {
         throw new Error('Invalid number ' + numString);
       }
