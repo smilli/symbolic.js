@@ -92,3 +92,45 @@ sy.Expr.prototype.addOperands = function(newOperands) {
   }
   this.operands.push.apply(this.operands, newOperands);
 };
+
+
+/**
+ * Evaluates the expression by replacing the given variable with the new value.
+ *
+ * Does not modify the existing expression.  
+ *
+ * @param {char|sy.Symbol} variable - The variable to substitute
+ * @param {Number} subVal - The value to replace the variable with
+ * @returns {Number|Expr} - The number the expression evaluates to or the
+ *  remaining expression.
+ */
+sy.Expr.prototype.eval = function(variable, subVal) {
+ // TODO(smilli): Does not combine terms like 2x and 5x, only 
+ // combines numerical values currently. 
+  if (!(variable instanceof sy.Symbol)) {
+    variable = new sy.Symbol(variable);
+  }
+  return this._evalHelper(variable, subVal);
+};
+
+sy.Expr.prototype._evalHelper = function(variable, subVal) {
+  if (this.operands.length === 0) {
+    if (this.value instanceof sy.Symbol && 
+        this.value.equals(variable)) {
+      return subVal;
+    }
+    return this.value;
+  }
+  var evaluation = null;
+  for (var i = 0; i < this.operands.length; i++) {
+    evaledOperand = this.operands[i]._evalHelper(variable, subVal);
+    if (typeof evaledOperand === 'number') {
+      if (!evaluation) {
+        evaluation = evaledOperand;
+      } else {
+        evaluation = sy.applyOp(this.value, [evaluation, evaledOperand]);
+      }
+    }
+  }
+  return evaluation;
+};

@@ -36,7 +36,6 @@ describe('Expr', function(){
           'operator as a value must have operands.'));
     }
   });
-
 });
 
 
@@ -67,5 +66,40 @@ describe('Expr.addOperands', function() {
     expect(function() {
       expr.addOperands([sy.Symbol('x'), 4]);
     }).toThrow(new Error('Operands must be expressions.'));
+  });
+});
+
+
+describe('Expr.eval', function() {
+  it('should evaluate expressions', function() {
+    var expr;
+    
+    expr = new sy.Expr('+', [new sy.Expr(2), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr.eval(new sy.Symbol('x'), 3)).toBe(5);
+
+    expr = new sy.Expr('-', [new sy.Expr(new sy.Symbol('x')), new sy.Expr(3)]);
+    expect(expr.eval(new sy.Symbol('x'), 3)).toBe(0);
+
+    expr = new sy.Expr('*', [new sy.Expr(2), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr.eval('x', 3)).toBe(6);
+
+    expr = new sy.Expr('*', [new sy.Expr(2.58), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr.eval('x', 3.2)).toBe(8.256);
+
+    expr = new sy.Expr('*', [
+      new sy.Expr(new sy.Symbol('x')), 
+      new sy.Expr(new sy.Symbol('x'))
+    ]);
+    expect(expr.eval('x', 3)).toBe(9);
+
+    expr = new sy.Expr('^', [new sy.Expr(4), new sy.Expr(new sy.Symbol('x'))]);
+    expect(expr.eval('x', 3)).toBe(64);
+
+    expr = new sy.Expr('^', [new sy.Expr(new sy.Symbol('x')), new sy.Expr(3)]);
+    expect(expr.eval('x', 5)).toBe(125);
+
+    expr = new sy.Expr('/', [new sy.Expr(new sy.Symbol('x')), new sy.Expr(3)]);
+    expect(expr.eval('x', 15)).toBe(5);
+
   });
 });

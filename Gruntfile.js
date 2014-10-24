@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         latedef: true,
         nonbsp: true,
         quotmark: 'single',
+        evil: true,
         globals: {
           describe: false,
           it: false,

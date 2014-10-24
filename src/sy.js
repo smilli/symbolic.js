@@ -36,3 +36,39 @@ sy.isTerminal = function(value) {
 sy.isOpOrdered = function(op) {
   return sy._OP_ORDERED[op];
 };
+
+/**
+ * Applies op to the list of operands.
+ * @param {char} op - the operator
+ * @param {Number[]} operands - list of operands
+ * @returns {Number} - operands evaluated with operator
+ */
+sy.applyOp = function(op, operands) {
+  var result = null;
+  for (var i = 0; i < operands.length; i++) {
+    if (!result) {
+      result = operands[i];
+    } else {
+      switch (op) {
+        case '+':
+          result = result + operands[i];
+          break;
+        case '-':
+          result = result - operands[i];
+          break;
+        case '*':
+          result = result * operands[i];
+          break;
+        case '/':
+          result = result / operands[i];
+          break;
+        case '^':
+          result = Math.pow(result,operands[i]);
+          break;
+        default:
+          throw new Error('Invalid operator');
+      }
+    }
+  }
+  return result;
+};
