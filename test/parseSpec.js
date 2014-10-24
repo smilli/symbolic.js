@@ -42,12 +42,13 @@ describe('sy.parse', function() {
 
     expr = sy.parse('2.5xy');
     expected = new sy.Expr('*', [
+      new sy.Expr(new sy.Symbol('y')),
       new sy.Expr(2.5),
-      new sy.Expr(new sy.Symbol('x')),
-      new sy.Expr(new sy.Symbol('y'))
+      new sy.Expr(new sy.Symbol('x'))
     ]);
     expect(expr).toEqual(expected);
   });
+
 
   it('should parse expressions with operators', function() {
     var expr, expected;
@@ -81,62 +82,107 @@ describe('sy.parse', function() {
   });
 
 
+  it('should parse expressions with multiple operators', function() {
+    var expr, expected;
+    expr = sy.parse('3x^2 + 2x + 1');
+    expected = new sy.Expr('+', [
+      new sy.Expr(1),
+      new sy.Expr('*', [
+        new sy.Expr(3),
+        new sy.Expr('^', [
+          new sy.Expr(new sy.Symbol('x')),
+          new sy.Expr(2)
+        ])
+      ]),
+      new sy.Expr('*', [
+        new sy.Expr(2),
+        new sy.Expr(new sy.Symbol('x'))
+      ])
+    ]);
+    expect(expr).toEqual(expected);
+
+    expr = sy.parse('4x^3 + 3x^2 + 2x + 1');
+    expected = new sy.Expr('+', [
+      new sy.Expr(1),
+      new sy.Expr('*', [
+        new sy.Expr(2),
+        new sy.Expr(new sy.Symbol('x'))
+      ]),
+      new sy.Expr('*', [
+        new sy.Expr(4),
+        new sy.Expr('^', [
+          new sy.Expr(new sy.Symbol('x')),
+          new sy.Expr(3)
+        ])
+      ]),
+      new sy.Expr('*', [
+        new sy.Expr(3),
+        new sy.Expr('^', [
+          new sy.Expr(new sy.Symbol('x')),
+          new sy.Expr(2)
+        ])
+      ])
+    ]);
+    expect(expr).toEqual(expected);
+  });
+
+
   it('should only flatten unordered expressions', function() {
     var expr, expected;
     expr = sy.parse('2.54 + x + y');
     expected = new sy.Expr('+', [
+      new sy.Expr(new sy.Symbol('y')),
       new sy.Expr(2.54),
-      new sy.Expr(new sy.Symbol('x')),
-      new sy.Expr(new sy.Symbol('y'))
+      new sy.Expr(new sy.Symbol('x'))
     ]);
     expect(expr).toEqual(expected);
 
     expr = sy.parse('2.54 * x * y');
     expected = new sy.Expr('*', [
+      new sy.Expr(new sy.Symbol('y')),
       new sy.Expr(2.54),
       new sy.Expr(new sy.Symbol('x')),
-      new sy.Expr(new sy.Symbol('y'))
     ]);
     expect(expr).toEqual(expected);
 
     expr = sy.parse('2.54 + x - y');
-    expected = new sy.Expr('+', [
-      new sy.Expr(2.54),
-      new sy.Expr('-', [
-        new sy.Expr(new sy.Symbol('x')),
-        new sy.Expr(new sy.Symbol('y'))
-      ])
+    expected = new sy.Expr('-', [
+      new sy.Expr('+', [
+        new sy.Expr(2.54),
+        new sy.Expr(new sy.Symbol('x'))
+      ]),
+      new sy.Expr(new sy.Symbol('y'))
     ]);
     expect(expr).toEqual(expected);
 
     expr = sy.parse('6.8 - 3.4 - 6.7');
     expected = new sy.Expr('-', [
-      new sy.Expr(6.8),
       new sy.Expr('-', [
-        new sy.Expr(3.4),
-        new sy.Expr(6.7)
-      ])
+        new sy.Expr(6.8),
+        new sy.Expr(3.4)
+      ]),
+      new sy.Expr(6.7)
     ]);
     expect(expr).toEqual(expected);
 
     expr = sy.parse('6.8/3.4/6.7');
     expected = new sy.Expr('/', [
-      new sy.Expr(6.8),
       new sy.Expr('/', [
-        new sy.Expr(3.4),
-        new sy.Expr(6.7)
-      ])
+        new sy.Expr(6.8),
+        new sy.Expr(3.4)
+      ]),
+      new sy.Expr(6.7)
     ]);
 
     expect(expr).toEqual(expected);
     expect(expr).toEqual(expected);
     expr = sy.parse('2^3^5');
     expected = new sy.Expr('^', [
-      new sy.Expr(2),
       new sy.Expr('^', [
-        new sy.Expr(3),
-        new sy.Expr(5)
-      ])
+        new sy.Expr(2),
+        new sy.Expr(3)
+      ]),
+      new sy.Expr(5)
     ]);
     expect(expr).toEqual(expected);
   });

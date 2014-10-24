@@ -46,7 +46,7 @@ sy.isOpOrdered = function(op) {
 sy.applyOp = function(op, operands) {
   var result = null;
   for (var i = 0; i < operands.length; i++) {
-    if (!result) {
+    if (result === null) {
       result = operands[i];
     } else {
       switch (op) {
@@ -180,8 +180,6 @@ sy.Expr.prototype.addOperands = function(newOperands) {
  *  remaining expression.
  */
 sy.Expr.prototype.eval = function(variable, subVal) {
- // TODO(smilli): Does not combine terms like 2x and 5x, only 
- // combines numerical values currently. 
   if (!(variable instanceof sy.Symbol)) {
     variable = new sy.Symbol(variable);
   }
@@ -200,7 +198,7 @@ sy.Expr.prototype._evalHelper = function(variable, subVal) {
   for (var i = 0; i < this.operands.length; i++) {
     evaledOperand = this.operands[i]._evalHelper(variable, subVal);
     if (typeof evaledOperand === 'number') {
-      if (!evaluation) {
+      if (evaluation === null) {
         evaluation = evaledOperand;
       } else {
         evaluation = sy.applyOp(this.value, [evaluation, evaledOperand]);
@@ -295,9 +293,9 @@ sy._dijkstraParse = function(exprStr) {
       }
     } else if (sy._isDigitOrDecPoint(exprStr[index])) {
       var numString = '';
-      while (index < exprStr.length && 
+      while (index < exprStr.length &&
         sy._isDigitOrDecPoint(exprStr[index])) {
-        numString += exprStr[index];      
+        numString += exprStr[index];
         index++;
       }
       // for a number followed by a variable like 2x
@@ -323,7 +321,7 @@ sy._dijkstraParse = function(exprStr) {
       index++;
     } else if (sy.isOperator(exprStr[index])) {
       var newOp = exprStr[index];
-      while (opStack.length > 0 && 
+      while (opStack.length() > 0 &&
           sy._OP_PRECEDENCES[newOp] <= sy._OP_PRECEDENCES[opStack.peek()]) {
         sy._popOper(output, opStack);
       }

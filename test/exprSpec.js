@@ -71,9 +71,9 @@ describe('Expr.addOperands', function() {
 
 
 describe('Expr.eval', function() {
-  it('should evaluate expressions', function() {
+  it('should evaluate basic expressions', function() {
     var expr;
-    
+
     expr = new sy.Expr('+', [new sy.Expr(2), new sy.Expr(new sy.Symbol('x'))]);
     expect(expr.eval(new sy.Symbol('x'), 3)).toBe(5);
 
@@ -87,7 +87,7 @@ describe('Expr.eval', function() {
     expect(expr.eval('x', 3.2)).toBe(8.256);
 
     expr = new sy.Expr('*', [
-      new sy.Expr(new sy.Symbol('x')), 
+      new sy.Expr(new sy.Symbol('x')),
       new sy.Expr(new sy.Symbol('x'))
     ]);
     expect(expr.eval('x', 3)).toBe(9);
@@ -101,5 +101,19 @@ describe('Expr.eval', function() {
     expr = new sy.Expr('/', [new sy.Expr(new sy.Symbol('x')), new sy.Expr(3)]);
     expect(expr.eval('x', 15)).toBe(5);
 
+  });
+
+  it('should evaluate complex expressions', function() {
+    var expr;
+
+    expr = sy.parse('4x^3 + 3x^2 + 2x + 1');
+    expect(expr.eval('x', 1)).toBe(10);
+    expect(expr.eval('x', 0)).toBe(1);
+    expect(expr.eval('x', -1)).toBe(-2);
+
+
+    expr = sy.parse('3z^3 + 5z^2 + 2z + 8');
+    expect(expr.eval('z', 0)).toBe(8);
+    expect(expr.eval(new sy.Symbol('z'), 2)).toBe(56);
   });
 });

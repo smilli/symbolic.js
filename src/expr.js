@@ -105,8 +105,6 @@ sy.Expr.prototype.addOperands = function(newOperands) {
  *  remaining expression.
  */
 sy.Expr.prototype.eval = function(variable, subVal) {
- // TODO(smilli): Does not combine terms like 2x and 5x, only 
- // combines numerical values currently. 
   if (!(variable instanceof sy.Symbol)) {
     variable = new sy.Symbol(variable);
   }
@@ -125,7 +123,7 @@ sy.Expr.prototype._evalHelper = function(variable, subVal) {
   for (var i = 0; i < this.operands.length; i++) {
     evaledOperand = this.operands[i]._evalHelper(variable, subVal);
     if (typeof evaledOperand === 'number') {
-      if (!evaluation) {
+      if (evaluation === null) {
         evaluation = evaledOperand;
       } else {
         evaluation = sy.applyOp(this.value, [evaluation, evaledOperand]);

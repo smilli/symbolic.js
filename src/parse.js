@@ -83,9 +83,9 @@ sy._dijkstraParse = function(exprStr) {
       }
     } else if (sy._isDigitOrDecPoint(exprStr[index])) {
       var numString = '';
-      while (index < exprStr.length && 
+      while (index < exprStr.length &&
         sy._isDigitOrDecPoint(exprStr[index])) {
-        numString += exprStr[index];      
+        numString += exprStr[index];
         index++;
       }
       // for a number followed by a variable like 2x
@@ -111,7 +111,7 @@ sy._dijkstraParse = function(exprStr) {
       index++;
     } else if (sy.isOperator(exprStr[index])) {
       var newOp = exprStr[index];
-      while (opStack.length > 0 && 
+      while (opStack.length() > 0 &&
           sy._OP_PRECEDENCES[newOp] <= sy._OP_PRECEDENCES[opStack.peek()]) {
         sy._popOper(output, opStack);
       }

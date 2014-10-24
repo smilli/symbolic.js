@@ -46,7 +46,7 @@ sy.isOpOrdered = function(op) {
 sy.applyOp = function(op, operands) {
   var result = null;
   for (var i = 0; i < operands.length; i++) {
-    if (!result) {
+    if (result === null) {
       result = operands[i];
     } else {
       switch (op) {
